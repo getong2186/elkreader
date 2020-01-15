@@ -16,5 +16,6 @@ module.exports = {
     dbPassword: '123456',
     dbName: 'rdc_manager',
     dbCrypto: false
-  }
+  },
+  defaultIp: '124.193.68.147'
 };

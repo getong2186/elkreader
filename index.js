@@ -1,5 +1,6 @@
 const elkSearch = require('./lib/elksearch');
 const logger = require('./lib/logger');
+const { getdbIns } = require('./lib/geo');
 const perSize = 1000;
 
 // (async () => {
@@ -39,14 +40,25 @@ const perSize = 1000;
 
 
 (async () => {
+  await getdbIns();
   let indices = await elkSearch.getIndices();
-  indices = indices.filter(x => x.index > 'sdp-2019.12.20').map(x => x.index).sort();
+  indices = indices.filter(x => x.index >= 'sdp-2019.12.01').map(x => x.index).sort();
   console.log(indices);
   try {
-    for (let i = 0, len = indices.length; i < 1; i++) {
+    for (let i = 0, len = indices.length; i < 7; i++) {
       await elkSearch.getDocsByScroll(indices[i], perSize);
     }
   } catch (ex) {
     logger.error('出错了', ex);
   }
 })();
+
+process.on('uncaughtException', (err) => {
+  logger.error('=====================\n', err);
+  process.exit();
+});
+
+process.on('unhandledRejection', (err) => {
+  logger.error('---------------------\n', err);
+  process.exit();
+});
